@@ -1,0 +1,66 @@
+#!/usr/bin/php
+<?php
+
+use Dotenv\Dotenv;
+use Pluckypenguinphil\WslSiteManager\SiteGenerator;
+
+if (posix_getuid() !== 0) {
+    echo "Please run either as root or sudo.".PHP_EOL;
+    exit(-1);
+}
+
+require_once dirname(__DIR__).'/vendor/autoload.php';
+
+Dotenv::createImmutable(dirname(__DIR__))->load();
+
+$arguments = $argv;
+array_shift($arguments);
+
+$domain = '';
+$directory = '';
+$database = null;
+$phpVersion = '7.4';
+$destroy = false;
+
+foreach ($arguments as $argument) {
+    $parts = explode('=', $argument);
+    switch ($parts[0]) {
+        case '--domain':
+            $domain = $parts[1];
+            break;
+        case '--directory':
+        case '--dir':
+            $directory = $parts[1];
+            break;
+        case '--database':
+        case '--db':
+            $database = $parts[1];
+            break;
+        case '--php':
+        case '--phpversion':
+            $phpVersion = $parts[1];
+            break;
+        case '--destroy':
+            $destroy = true;
+            break;
+        default:
+            echo "Invalid argument specified: ".$parts[1].PHP_EOL;
+            exit(-1);
+    }
+}
+
+if (empty($domain) || empty($directory)) {
+    echo "Ensure you provide at least the domain and directory of the site you wish to enable!".PHP_EOL;
+    exit(-1);
+}
+
+$generator = new SiteGenerator();
+
+if ($destroy) {
+    $generator->destroy($domain);
+    echo "Your site $domain has been removed. The project directory and database have not been removed. If you no longer need these you should remove them manually.".PHP_EOL;
+} else {
+    $generator->generate($domain, $directory, $database, $phpVersion);
+    echo "Site created! Your new site can be accessed at: https://$domain".PHP_EOL;
+}
+
