@@ -49,8 +49,12 @@ foreach ($arguments as $argument) {
     }
 }
 
-if (empty($domain) || empty($directory)) {
-    echo "Ensure you provide at least the domain and directory of the site you wish to enable!".PHP_EOL;
+if (empty($domain)) {
+    echo "You must specify the domain to create or delete.".PHP_EOL;
+    exit(-1);
+}
+if (empty($directory) && !$destroy) {
+    echo "You must specify the project's directory.".PHP_EOL;
     exit(-1);
 }
 
