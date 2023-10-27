@@ -1,0 +1,14 @@
+{
+    "name": "pluckypenguinphil/wsl-site-manager",
+    "description": "Management interface for WSL project sites",
+    "type": "project",
+    "require-dev": {
+        "symfony/var-dumper": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pluckypenguinphil\\WslSiteManager\\": "src/"
+        }
+    },
+    "require": {}
+}
